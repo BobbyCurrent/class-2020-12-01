@@ -16,6 +16,8 @@ week_12 <- shaming %>%
   mutate(treatment = fct_relevel(treatment, "Control")) %>% 
   mutate(solo = ifelse(hh_size == 1, TRUE, FALSE)) %>% 
   select(-general_04, -no_of_names, -birth_year, -hh_size) 
+
+week_12_sample <- sample_n(week_12, 1000)
 ```
 
 
@@ -32,6 +34,25 @@ age ~ sex + solo + primary_04 + primary_06 + treatment + sex:solo
 * Should we keep all these variables? And the interaction term?
 
 * Are you surprised about the meaningfulness, or lack thereof, for the treatment variables?
+
+
+```{r sc1}
+
+fit_1 <- stan_glm(age ~ sex + solo + sex:solo,
+         data = week_12_sample,
+         refresh = 0,
+         seed = 9)
+
+print(fit_1, digits = 5)
+
+```
+Intercept: A female in the control group that does not live alone.
+sexMale: The predicted difference in average age between males and females, is 1.4983.
+soloTRUE: The predited difference in average age between the intercept and females that live alone. Is 9.76.
+Interaction term: Just looking at males living alone, instead of males living with people or females living alone. The unique effect of being both male and living alone.
+primary_04Yes: The predicted difference in age between intercept and people in the control group that voted in the primary.
+
+
 
 
 
